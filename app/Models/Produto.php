@@ -15,4 +15,10 @@ class Produto extends Model
     {
         return $this->belongsToMany(Venda::class)->withPivot('quantidade', 'preco_unitario')->withTimestamps();
     }
+
+
+    public function categoria()
+    {
+        return $this->belongs(Categoria::class);
+    }
 }
