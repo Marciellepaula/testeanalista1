@@ -1,6 +1,9 @@
 <?php
 
+use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\VendaController;
+use App\Http\Controllers\VendaProdutoController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -17,4 +20,16 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+
+Route::get('clientes', [ClienteController::class, 'index']);
+Route::post('clientes', [ClienteController::class, 'store']);
+Route::get('clientes/{id}', [ClienteController::class, 'show']);
+Route::put('clientes/{id}', [ClienteController::class, 'update']);
+Route::delete('clientes/{id}', [ClienteController::class, 'destroy']);
+
+
+Route::get('vendas/{vendaId}/produtos', [VendaController::class, 'index']);
+Route::post('vendas/{vendaId}/produtos', [VendaController::class, 'store']);
+Route::put('vendas/{vendaId}/produtos/{produtoId}', [VendaController::class, 'update']);
+Route::delete('vendas/{vendaId}/produtos/{produtoId}', [VendaController::class, 'destroy']);
+require __DIR__ . '/auth.php';
