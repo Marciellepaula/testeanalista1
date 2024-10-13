@@ -3,42 +3,37 @@
 namespace App\Http\Controllers;
 
 use App\Models\Produto;
+use App\Services\ProdutoService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class ProdutoController extends Controller
 {
-    public function index()
+    protected $produtoService;
+
+    public function __construct(ProdutoService $produtoService)
     {
-        $produto = Produto::all();
-        return response()->json($produto);
+        $this->produtoService = $produtoService;
     }
 
+    public function index()
+    {
+        $produtos = $this->produtoService->getAll();
+        return response()->json($produtos);
+    }
 
     public function store(Request $request)
     {
-
-        $validator = Validator::make($request->all(), [
-            'nome' => 'required|string|max:255',
-            'cpf' => 'required|string|max:14|unique:produto',
-            'telefone' => 'required|string|max:15',
-            'email' => 'required|email|max:255|unique:produto',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+        try {
+            $produto = $this->produtoService->create($request->all());
+            return response()->json($produto, 201);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json($e->validator->errors(), 422);
         }
-
-
-        $produto = Produto::create($request->all());
-
-        return response()->json($produto, 201);
     }
-
 
     public function show($id)
     {
-        $produto = Produto::find($id);
+        $produto = $this->produtoService->find($id);
 
         if (!$produto) {
             return response()->json(['message' => 'produto não encontrado'], 404);
@@ -46,44 +41,32 @@ class ProdutoController extends Controller
 
         return response()->json($produto);
     }
-
 
     public function update(Request $request, $id)
     {
-        $produto = Produto::find($id);
+        $produto = $this->produtoService->find($id);
 
         if (!$produto) {
             return response()->json(['message' => 'produto não encontrado'], 404);
         }
 
-
-        $validator = Validator::make($request->all(), [
-            'nome' => 'string|max:255',
-            'cpf' => 'string|max:14|unique:produtos,cpf,' . $id,
-            'telefone' => 'string|max:15',
-            'email' => 'email|max:255|unique:produtos,email,' . $id,
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+        try {
+            $produto = $this->produtoService->update($produto, $request->all());
+            return response()->json($produto);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json($e->validator->errors(), 422);
         }
-
-
-        $produto->update($request->all());
-
-        return response()->json($produto);
     }
-
 
     public function destroy($id)
     {
-        $produto = Produto::find($id);
+        $produto = $this->produtoService->find($id);
 
         if (!$produto) {
             return response()->json(['message' => 'produto não encontrado'], 404);
         }
 
-        $produto->delete();
+        $this->produtoService->delete($produto);
 
         return response()->json(['message' => 'produto excluído com sucesso']);
     }
