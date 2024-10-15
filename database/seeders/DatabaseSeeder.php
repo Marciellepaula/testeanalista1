@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Cupom;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -23,6 +24,7 @@ class DatabaseSeeder extends Seeder
             ClienteSeeder::class,
             ProdutoSeeder::class,
             VendaSeeder::class,
+            CupomSeeder::class,
         ]);
     }
 }

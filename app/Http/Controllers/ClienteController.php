@@ -24,12 +24,17 @@ class ClienteController extends Controller
 
     public function store(Request $request)
     {
-        try {
-            $cliente = $this->clienteService->create($request->all());
-            return response()->json($cliente, 201);
-        } catch (ValidationException $e) {
-            return response()->json($e->validator->errors(), 422);
-        }
+
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users',
+            'password' => 'required|string|min:8',
+        ]);
+
+
+        $user = $this->clienteService->create($validatedData);
+
+        return response()->json($user, 201);
     }
 
     public function show($id)
@@ -45,19 +50,30 @@ class ClienteController extends Controller
 
     public function update(Request $request, $id)
     {
+
         $cliente = $this->clienteService->find($id);
+
 
         if (!$cliente) {
             return response()->json(['message' => 'Cliente não encontrado'], 404);
         }
 
+
+        $validated = $request->validate([
+            'nome' => 'nullable|string|max:255',
+            'cpf' => 'nullable|string|max:14|unique:clientes,cpf,' . $id,
+            'telefone' => 'nullable|string|max:15',
+            'email' => 'nullable|email|max:255|unique:clientes,email,' . $id,
+        ]);
+
         try {
-            $cliente = $this->clienteService->update($cliente, $request->all());
-            return response()->json($cliente);
+            $updatedCliente = $this->clienteService->update($cliente, $validated);
+            return response()->json($updatedCliente);
         } catch (ValidationException $e) {
             return response()->json($e->validator->errors(), 422);
         }
     }
+
 
     public function destroy($id)
     {

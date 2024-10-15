@@ -7,9 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Venda extends Model
 {
-    use HasFactory;
 
+    use HasFactory;
     protected $fillable = ['cliente_id', 'total'];
+
+    public function produtosvenda()
+    {
+        return $this->hasMany(ProdutoVenda::class);
+    }
+
 
     public function produtos()
     {

@@ -7,36 +7,83 @@ use App\Services\VendaService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\VendaRealizada;
+use App\Services\ClienteService;
+use App\Services\CupomService;
+use App\Services\ProdutoService;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
 class VendaController extends Controller
 {
     protected $vendaService;
+    protected $produtoService;
+    protected $cupomService;
+    protected $clienteService;
 
-    public function __construct(VendaService $vendaService)
+
+    public function __construct(VendaService $vendaService, ProdutoService $produtoService, CupomService  $cupomService, ClienteService $clienteService)
     {
         $this->vendaService = $vendaService;
+        $this->produtoService = $produtoService;
+        $this->cupomService = $cupomService;
+        $this->clienteService = $clienteService;
     }
+
 
     public function index()
     {
         $vendas = $this->vendaService->getAll();
-        return response()->json($vendas);
+        return view('venda.index', compact('vendas'));
+    }
+
+
+    public function create()
+    {
+        $cupons = $this->cupomService->getAll();
+        $produtos = $this->produtoService->getAll();
+        return view('venda.produtos', compact('produtos', 'cupons'));
     }
 
     public function store(Request $request)
     {
+
         try {
-            $venda = $this->vendaService->create($request->all());
+
+            $validated = Validator::make($request->all(), [
+                'nome' => 'required|string|max:255',
+                'cpf' => 'required|string|max:14',
+                'telefone' => 'required|string|max:15',
+                'email' => 'required|string|email|max:255|unique:clientes,email',
+                'produtos' => 'required|json',
+                'produtos.*.id' => 'required|exists:produtos,id',
+                'produtos.*.quantidade' => 'required|integer|min:1',
+                'cupom_desconto' => 'nullable|numeric|min:0|max:100'
+            ]);
 
 
-            Mail::to($venda->email_cliente)->queue(new VendaRealizada($venda));
+            if ($validated->fails()) {
+                throw new ValidationException($validated);
+            }
+
+            $cliente = $this->clienteService->create($validated->validated());
+            $venda = $this->vendaService->create($validated->validated(), $cliente->id);
+            Mail::to($cliente->email)->queue(new VendaRealizada($venda));
 
             return response()->json($venda, 201);
         } catch (ValidationException $e) {
+
             return response()->json($e->validator->errors(), 422);
+        } catch (\Exception $e) {
+
+            logger()->error('Error creating venda: ' . $e->getMessage());
+
+
+            return response()->json(['error' => 'An error occurred while processing the request.'], 500);
         }
     }
+
+
+
 
     public function show($id)
     {
