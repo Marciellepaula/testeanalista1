@@ -6,41 +6,31 @@
 
 
         <div class="bg-white p-6 rounded-lg shadow-md mb-6">
-            <h2 class="text-xl font-semibold mb-4">Informações do Cliente</h2>
-            <form id="saleForm" action="{{ route('venda.store') }}" method="POST">
-                @csrf
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="mb-3">
-                        <label for="nome" class="block text-gray-700">Nome do Cliente</label>
-                        <input type="text" id="nome" name="nome" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="cpf" class="block text-gray-700">CPF</label>
-                        <input type="text" id="cpf" name="cpf" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="telefone" class="block text-gray-700">Telefone</label>
-                        <input type="text" id="telefone" name="telefone" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="email" class="block text-gray-700">Email</label>
-                        <input type="email" id="email" name="email" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
-                    </div>
-                </div>
-                <input type="hidden" id="produtosInput" name="produtos">
-            </form>
+            <button id="openModal" class="bg-indigo-500 text-white px-4 py-2 rounded-md">
+                Abrir Formulário
+            </button>
+
+
+
 
             <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
                 @foreach ($produtos as $produto)
                     <div class="rounded-lg overflow-hidden shadow-lg">
+
                         <img class="h-auto max-w-full" src="{{ $produto->img }}" alt="{{ $produto->nome }}">
                         <div class="p-4">
                             <h3 class="text-lg font-semibold">{{ $produto->nome }}</h3>
+                            <h3 class="text-lg font-semibold">R${{ $produto->preco_venda }}</h3>
+                            <button
+                                class="mt-2 bg-blue-500 text-white px-4 py-2 rounded"
+                                onclick="openAddToCartModal('{{ $produto->id }}', '{{ $produto->nome }}', {{ $produto->preco_venda }})">
+                                Adicionar ao Carrinho
+                            </button>
+
                         </div>
                     </div>
                 @endforeach
-            </div>
-
+                </div>
 
 
                 <div class="bg-white p-6 rounded-lg shadow-md mb-6">
@@ -96,34 +86,68 @@
                 </div>
 
         </div>
+
+
+        @include('components.cliente-modal')
+        @include('components.carrinho-modal')
     </div>
 
+
+
     <script>
-        document.getElementById('saleForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-
-        event.preventDefault();
-
-
-        const produtosInput = document.getElementById('produtosInput');
-        produtosInput.value = JSON.stringify(cart);
-
-
-        this.submit();
-         });
 
         let cart = [];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const openModalBtn = document.getElementById('openModal');
+            const clientemodal = document.getElementById('clientemodal');
+
+            openModalBtn.addEventListener('click', () => {
+                clientemodal.classList.remove('hidden');
+            });
+        });
+
+        document.getElementById('saleForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const produtosInput = document.getElementById('produtosInput');
+            produtosInput.value = JSON.stringify(cart);
+
+            this.submit();
+        });
+
+
+        function openAddToCartModal(productId, productName, productPrice) {
+
+            document.getElementById('modalProductName').innerText = productName;
+            const productSelect = document.getElementById('product');
+            const quantityInput = document.getElementById('quantidade');
+
+
+            productSelect.value = productId;
+            quantityInput.value = 1;
+
+            document.getElementById('addToCartModal').classList.remove('hidden');
+        }
+
+
+        function closeAddToCartModal() {
+
+            document.getElementById('addToCartModal').classList.add('hidden');
+        }
+
 
         function addToCart() {
             const productSelect = document.getElementById('product');
             const quantityInput = document.getElementById('quantidade');
 
-
+            console.log(productSelect);
             const productId = productSelect.value;
             const productName = productSelect.options[productSelect.selectedIndex].text;
-            const productPrice = parseFloat(productSelect.options[productSelect.selectedIndex].dataset.price);
-            const quantity = parseInt(quantityInput.value);
 
+            const productPrice = parseFloat(productSelect.options[productSelect.selectedIndex].dataset.price);
+            console.log(productPrice);
+            const quantity = parseInt(quantityInput.value);
 
             if (productId && quantity > 0) {
                 const subtotal = productPrice * quantity;
@@ -131,10 +155,10 @@
 
                 renderCart();
                 updateTotals();
-                productSelect.value = "";
-                quantityInput.value = "";
+                closeAddToCartModal();
             }
         }
+
 
         function removeFromCart(index) {
             cart.splice(index, 1);
@@ -192,44 +216,7 @@
             updateTotals();
         }
     </script>
+
 @endsection
 
 
-{{-- <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-    <div>
-        <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image.jpg" alt="">
-    </div>
-    <div>
-        <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-1.jpg" alt="">
-    </div>
-    <div>
-        <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-2.jpg" alt="">
-    </div>
-    <div>
-        <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-3.jpg" alt="">
-    </div>
-    <div>
-        <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-4.jpg" alt="">
-    </div>
-    <div>
-        <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-5.jpg" alt="">
-    </div>
-    <div>
-        <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-6.jpg" alt="">
-    </div>
-    <div>
-        <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-7.jpg" alt="">
-    </div>
-    <div>
-        <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-8.jpg" alt="">
-    </div>
-    <div>
-        <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-9.jpg" alt="">
-    </div>
-    <div>
-        <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-10.jpg" alt="">
-    </div>
-    <div>
-        <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-11.jpg" alt="">
-    </div>
-</div> --}}
