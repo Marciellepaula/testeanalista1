@@ -20,24 +20,25 @@ class CategoriaController extends Controller
     public function index()
     {
         $categorias = $this->categoriaService->getAll();
-        return response()->json($categorias);
+        return view('categorias.index', compact('categorias'));
     }
 
     public function store(Request $request)
     {
-
         $validator = Validator::make($request->all(), [
             'nome' => 'required|string|max:255|unique:categorias',
             'descricao' => 'nullable|string|max:500',
         ]);
+
         if ($validator->fails()) {
-            throw new ValidationException($validator);
+            return redirect()->back()->withErrors($validator)->withInput();
         }
+
         try {
             $categoria = $this->categoriaService->create($request->all());
-            return response()->json($categoria, 201);
+            return redirect()->route('categorias.index')->with('success', 'Categoria criada com sucesso!');
         } catch (ValidationException $e) {
-            return response()->json($e->validator->errors(), 422);
+            return redirect()->back()->withErrors($e->validator)->withInput();
         }
     }
 
@@ -72,7 +73,7 @@ class CategoriaController extends Controller
 
 
         $updatedCategoria = $this->categoriaService->update($categoria, $request->only('nome', 'descricao'));
-        return response()->json($updatedCategoria);
+        return redirect()->route('categorias.index')->with('success', 'Categoria atualizada com sucesso!');
     }
 
     public function destroy($id)
