@@ -26,4 +26,24 @@ class Venda extends Model
     {
         return $this->belongsTo(Cliente::class);
     }
+
+
+
+    public function vendasPorCliente($clienteId)
+    {
+        $vendasDoCliente = Venda::byCliente($clienteId)->with(['produtos', 'cliente'])->get();
+        return response()->json($vendasDoCliente);
+    }
+
+
+    public function vendasAcimaDeTotal($total)
+    {
+        $vendasAcimaDeMil = Venda::aboveTotal($total)->with(['produtos', 'cliente'])->get();
+        return response()->json($vendasAcimaDeMil);
+    }
+
+    public function scopeEntreDatas($query, $inicio, $fim)
+    {
+        return $query->whereBetween('created_at', [$inicio, $fim]);
+    }
 }
