@@ -1,4 +1,6 @@
-<!-- Modal para adicionar ao carrinho -->
+@props(['produtos'])
+
+
 <div id="addToCartModal" class="hidden fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
     <div class="bg-white p-4 rounded-lg">
         <h2 class="text-lg font-semibold" id="modalProductName">Adicionar ao Carrinho</h2>
