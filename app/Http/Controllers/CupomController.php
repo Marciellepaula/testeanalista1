@@ -30,7 +30,9 @@ class CupomController extends Controller
 
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+
+
+        $validator = $request->validate([
             'codigo' => 'required|string|max:50|unique:cupons,codigo',
             'desconto_percentual' => 'nullable|numeric|min:0|max:100',
             'desconto_fixo' => 'nullable|numeric|min:0',
@@ -39,11 +41,11 @@ class CupomController extends Controller
             'data_fim' => 'nullable|date|after:data_inicio',
         ]);
 
-        if ($validator->fails()) {
+        if (!$validator) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        $cupom = $this->cupomService->create($request->all());
+        $cupom = $this->cupomService->create($validator);
         return redirect()->route('cupons.index')->with('success', 'Cupom criado com sucesso!');
     }
 
@@ -59,7 +61,7 @@ class CupomController extends Controller
 
     public function update(Request $request, Cupom $cupom)
     {
-        $validator = Validator::make($request->all(), [
+        $validator = $request->validate([
             'codigo' => 'sometimes|required|string|max:50|unique:cupons,codigo,' . $cupom->id,
             'desconto_percentual' => 'sometimes|nullable|numeric|min:0|max:100',
             'desconto_fixo' => 'sometimes|nullable|numeric|min:0',
@@ -68,11 +70,11 @@ class CupomController extends Controller
             'data_fim' => 'sometimes|nullable|date|after:data_inicio',
         ]);
 
-        if ($validator->fails()) {
+        if ($validator) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        $this->cupomService->update($cupom, $request->all());
+        $this->cupomService->update($cupom, $validator);
         return redirect()->route('cupons.index')->with('success', 'Cupom atualizado com sucesso!');
     }
 
