@@ -29,7 +29,7 @@ Route::middleware('auth')->group(function () {
     Route::put('/produto/{id}', [ProdutoController::class, 'update']);
     Route::delete('/produto/{id}', [ProdutoController::class, 'destroy']);
     Route::get('/vendas/create', [VendaController::class, 'create']);
-    Route::get('vendas/', [VendaController::class, 'index']);
+    Route::get('vendas/', [VendaController::class, 'index'])->name('venda');
     Route::post('vendas/produtos/', [VendaController::class, 'store'])->name('venda.store');
 });
 
