@@ -5,6 +5,7 @@
         <h1 class="text-3xl font-bold mb-6">Venda de Produtos</h1>
 
 
+
         <div class="bg-white p-6 rounded-lg shadow-md mb-6">
 
 
@@ -25,7 +26,7 @@
                     </div>
                 @endforeach
             </div>
-            <input type="hidden" name="produtosInput" id="produtosInput">
+
             <div class="bg-white p-6 rounded-lg shadow-md mb-6">
                 <h2 class="text-xl font-semibold mb-4">Carrinho de Produtos</h2>
                 <table class="min-w-full bg-white border rounded-lg shadow-sm" id="cartTable">
@@ -84,7 +85,7 @@
             </div>
 
         </div>
-
+        <x-sucess-modal />
         <x-carrinho-modal :produtos="$produtos" />
 
         <x-cliente-modal />
@@ -105,22 +106,20 @@
                 clientemodal.classList.remove('hidden');
             });
 
-
             closeModalBtn.addEventListener('click', () => {
                 clientemodal.classList.add('hidden');
             });
-
-
 
             document.getElementById('customerForm').addEventListener('submit', function(event) {
                 const cpf = document.getElementById('cpf').value;
                 const nome = document.getElementById('nome').value;
                 const telefone = document.getElementById('telefone').value;
                 const email = document.getElementById('email').value;
+
+
                 const produtosInput = document.getElementById('produtosInput');
                 produtosInput.value = JSON.stringify(cart);
 
-                console.log(produtosInput.value);
                 const cpfRegex = /^\d{11}$/;
                 if (!cpfRegex.test(cpf)) {
                     alert('Por favor, insira um CPF válido com 11 dígitos.');
@@ -186,14 +185,14 @@
             }
         }
 
-        // Remove item from cart
+
         function removeFromCart(index) {
             cart.splice(index, 1);
             renderCart();
             updateTotals();
         }
 
-        // Render cart items in table
+
         function renderCart() {
             const cartItems = document.getElementById('cartItems');
             cartItems.innerHTML = '';
@@ -212,7 +211,7 @@
             });
         }
 
-        // Update totals for cart
+
         function updateTotals() {
             const subtotal = cart.reduce((acc, item) => acc + item.subtotal, 0);
             const discount = parseFloat(document.getElementById('discountAmount').innerText.replace('R$ ', '').replace(',',
@@ -223,7 +222,7 @@
             document.getElementById('totalAmount').innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
         }
 
-        // Apply discount function
+
         function applyDiscount() {
             const discountCode = document.getElementById('coupon_code').value;
             const discountMessage = document.getElementById('discountMessage');
@@ -232,7 +231,7 @@
 
             @foreach ($cupons as $cupom)
                 if (discountCode === '{{ $cupom->codigo }}') {
-                    discount = {{ $cupom->desconto_percentual }};
+                    discount = {{ $cupom->desconto_percentual / 10 }};
                 }
             @endforeach
 
