@@ -16,7 +16,7 @@ class VendaService
     public function create(array $data, $id)
     {
 
-        logger($id);
+
 
         $venda = Venda::create([
             'cliente_id' => $id,
@@ -35,13 +35,18 @@ class VendaService
                 'quantidade' => $produto['quantidade'],
                 'preco' => $produtoInfo->preco_venda
             ]);
+            $produtoInfo->update([
+                'quantidade' => $produtoInfo->quantidade - $produto['quantidade']
+            ]);
         }
+
 
 
         if (isset($data['cupom_desconto'])) {
             $desconto = $total * ($data['cupom_desconto'] / 100);
             $total -= $desconto;
         }
+
 
         $venda->update(['total' => $total]);
 
@@ -63,5 +68,24 @@ class VendaService
     public function delete(Venda $venda)
     {
         $venda->delete();
+    }
+
+
+
+    public function getVendasPorCliente($clienteId)
+    {
+        return Venda::byCliente($clienteId)->with(['produtos', 'cliente'])->get();
+    }
+
+
+    public function getVendasAcimaDeTotal($total)
+    {
+        return Venda::aboveTotal($total)->with(['produtos', 'cliente'])->get();
+    }
+
+
+    public function getVendasEntreDatas($startDate, $endDate)
+    {
+        return Venda::betweenDates($startDate, $endDate)->with(['produtos', 'cliente'])->get();
     }
 }
