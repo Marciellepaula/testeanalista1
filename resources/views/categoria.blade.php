@@ -1,4 +1,4 @@
-<!-- resources/views/index.blade.php -->
+
 @extends('layouts.app')
 
 @section('content')
@@ -7,7 +7,7 @@
 
         <x-button class="mt-4" href="#modal">Adicionar Categoria</x-button>
 
-        <!-- Modal -->
+
         <div id="modal" class="hidden">
             <x-modal title="Adicionar Categoria">
                 <form method="POST" action="{{ route('categorias.store') }}">

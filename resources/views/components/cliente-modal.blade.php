@@ -28,7 +28,7 @@
                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                     required aria-required="true" aria-label="E-mail do cliente">
             </div>
-            <!-- Hidden input to store product data -->
+
             <input type="hidden" id="produtosInput" name="produtos" />
 
             <div class="flex justify-end">

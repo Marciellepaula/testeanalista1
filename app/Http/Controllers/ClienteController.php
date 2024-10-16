@@ -19,22 +19,33 @@ class ClienteController extends Controller
     public function index()
     {
         $clientes = $this->clienteService->getAll();
-        return response()->json($clientes);
+        return view('clientes.index', compact('clientes'));
+    }
+
+    public function create()
+    {
+        return view('clientes.create');
     }
 
     public function store(Request $request)
     {
 
         $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
+            'nome' => 'required|string|max:255',
+            'cpf' => 'required|string|max:14|unique:clientes,cpf',
+            'telefone' => 'required|string|max:15',
             'email' => 'required|email|max:255|unique:users',
             'password' => 'required|string|min:8',
         ]);
 
+        try {
 
-        $user = $this->clienteService->create($validatedData);
+            $cliente = $this->clienteService->create($validatedData);
+            return redirect()->route('clientes.index')->with('success', 'Cliente criado com sucesso!');
+        } catch (ValidationException $e) {
 
-        return response()->json($user, 201);
+            return redirect()->back()->withErrors($e->validator)->withInput();
+        }
     }
 
     public function show($id)
@@ -42,20 +53,29 @@ class ClienteController extends Controller
         $cliente = $this->clienteService->find($id);
 
         if (!$cliente) {
-            return response()->json(['message' => 'Cliente não encontrado'], 404);
+            return redirect()->route('clientes.index')->withErrors(['message' => 'Cliente não encontrado']);
         }
 
-        return response()->json($cliente);
+        return view('clientes.show', compact('cliente'));
+    }
+
+    public function edit($id)
+    {
+        $cliente = $this->clienteService->find($id);
+
+        if (!$cliente) {
+            return redirect()->route('clientes.index')->withErrors(['message' => 'Cliente não encontrado']);
+        }
+
+        return view('clientes.edit', compact('cliente'));
     }
 
     public function update(Request $request, $id)
     {
-
         $cliente = $this->clienteService->find($id);
 
-
         if (!$cliente) {
-            return response()->json(['message' => 'Cliente não encontrado'], 404);
+            return redirect()->route('clientes.index')->withErrors(['message' => 'Cliente não encontrado']);
         }
 
 
@@ -68,23 +88,22 @@ class ClienteController extends Controller
 
         try {
             $updatedCliente = $this->clienteService->update($cliente, $validated);
-            return response()->json($updatedCliente);
+            return redirect()->route('clientes.index')->with('success', 'Cliente atualizado com sucesso!');
         } catch (ValidationException $e) {
-            return response()->json($e->validator->errors(), 422);
+            return redirect()->back()->withErrors($e->validator)->withInput();
         }
     }
-
 
     public function destroy($id)
     {
         $cliente = $this->clienteService->find($id);
 
         if (!$cliente) {
-            return response()->json(['message' => 'Cliente não encontrado'], 404);
+            return redirect()->route('clientes.index')->withErrors(['message' => 'Cliente não encontrado']);
         }
 
         $this->clienteService->delete($cliente);
 
-        return response()->json(['message' => 'Cliente excluído com sucesso']);
+        return redirect()->route('clientes.index')->with('success', 'Cliente excluído com sucesso!'); // Redirect with success message
     }
 }

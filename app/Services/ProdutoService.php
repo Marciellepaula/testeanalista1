@@ -16,7 +16,23 @@ class ProdutoService
 
     public function create(array $data)
     {
-        return Produto::create($data);
+
+        if (isset($data['imagem']) && $data['imagem']->isValid()) {
+            $path = $data['imagem']->store('images/produtos', 'public');
+            $data['imagem'] = $path;
+        } else {
+            $data['imagem'] = null;
+        }
+
+        return Produto::create([
+            'nome' => $data['nome'],
+            'descricao' => $data['descricao'],
+            'preco_compra' => $data['preco_compra'],
+            'preco_venda' => $data['preco_venda'],
+            'quantidade_estoque' => $data['quantidade_estoque'],
+            'imagem' => $data['imagem'],
+            'categoria_id' => $data['categoria_id'],
+        ]);
     }
 
 

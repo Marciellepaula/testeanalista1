@@ -8,6 +8,7 @@ use App\Services\ProdutoService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 
 class ProdutoController extends Controller
 {
@@ -26,36 +27,36 @@ class ProdutoController extends Controller
 
     public function create()
     {
-        $auth = Auth::attempt();
+        if (!Auth::check()) {
+            return redirect()->route('login');
+        }
         $categorias = Categoria::all();
         return view('produtos.create', compact('categorias'));
     }
+
     public function store(Request $request)
     {
+
+        $validatedData = $request->validate([
+            'nome' => 'required|string|max:255',
+            'descricao' => 'required|string|max:14|unique:produtos,descricao',
+            'preco_compra' => 'required|numeric|max:999999.99',
+            'preco_venda' => 'required|numeric|max:999999.99',
+            'quantidade_estoque' => 'required|integer|min:0',
+            'imagem' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'categoria_id' => 'required|exists:categorias,id',
+        ]);
+
         try {
 
-            $validator = Validator::make($request->all(), [
-                'nome' => 'required|string|max:255',
-                'cpf' => 'required|string|max:14|unique:produtos,cpf',
-                'telefone' => 'required|string|max:15',
-                'email' => 'required|string|email|max:255|unique:produtos,email',
-            ]);
+            $produto = $this->produtoService->create($validatedData);
 
-
-            if ($validator->fails()) {
-                throw new \Illuminate\Validation\ValidationException($validator);
-            }
-
-
-            $produto = $this->produtoService->create($validator->validated());
-
-
-            return response()->json($produto, 201);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-
-            return response()->json($e->validator->errors(), 422);
+            return redirect()->route('produtos.index')->with('success', 'Produto criado com sucesso!');
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['message' => 'Erro ao criar produto: ' . $e->getMessage()])->withInput();
         }
     }
+
 
 
     public function show($id)
@@ -89,12 +90,13 @@ class ProdutoController extends Controller
     {
         $produto = $this->produtoService->find($id);
 
+
         if (!$produto) {
-            return response()->json(['message' => 'produto não encontrado'], 404);
+            return redirect()->route('produtos.index')->withErrors(['message' => 'Produto não encontrado']);
         }
 
         $this->produtoService->delete($produto);
 
-        return response()->json(['message' => 'produto excluído com sucesso']);
+        return redirect()->route('produtos.index')->with('success', 'Produto excluído com sucesso!');
     }
 }

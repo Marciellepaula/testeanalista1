@@ -23,6 +23,7 @@
                     <td class="px-4 py-2">R$ {{ number_format($venda['total'], 2, ',', '.') }}</td>
                     <td class="px-4 py-2">{{ \Carbon\Carbon::parse($venda['created_at'])->format('d/m/Y H:i') }}</td>
                     <td class="px-4 py-2">{{ \Carbon\Carbon::parse($venda['updated_at'])->format('d/m/Y H:i') }}</td>
+
                 </tr>
             @endforeach
         </tbody>

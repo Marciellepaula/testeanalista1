@@ -12,6 +12,7 @@
                         <th class="py-3 px-6 text-left font-medium text-gray-700">Preço de Venda</th>
                         <th class="py-3 px-6 text-left font-medium text-gray-700">Descrição</th>
                         <th class="py-3 px-6 text-left font-medium text-gray-700">Quantidade em Estoque</th>
+                        <th class="py-3 px-6 text-left font-medium text-gray-700">Imagen</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200">
@@ -21,6 +22,13 @@
                             <td class="py-4 px-6 text-gray-900">R$ {{ number_format($produto->preco_venda, 2, ',', '.') }}</td>
                             <td class="py-4 px-6 text-gray-600">{{ $produto->descricao }}</td>
                             <td class="py-4 px-6 text-gray-900">{{ $produto->quantidade_estoque }}</td>
+                           @if($produto->imagem)
+                           <td>
+                            <img src="{{ asset('storage/' . $produto->imagem) }}" alt="Imagem" class="w-16 h-16 object-cover">
+                        @else
+                            Não disponível
+                        @endif
+                    </td>
                         </tr>
                     @endforeach
                 </tbody>
