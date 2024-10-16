@@ -49,7 +49,8 @@ class VendaController extends Controller
 
         try {
 
-            $validated = Validator::make($request->all(), [
+            logger($request);
+            $validated =  $request->validate($request->all(), [
                 'nome' => 'required|string|max:255',
                 'cpf' => 'required|string|max:14',
                 'telefone' => 'required|string|max:15',
@@ -61,15 +62,16 @@ class VendaController extends Controller
             ]);
 
 
-            if ($validated->fails()) {
+            if ($validated) {
                 throw new ValidationException($validated);
             }
 
-            $cliente = $this->clienteService->create($validated->validated());
-            $venda = $this->vendaService->create($validated->validated(), $cliente->id);
+            $cliente = $this->clienteService->create($validated);
+            $venda = $this->vendaService->create($validated, $cliente->id);
             Mail::to($cliente->email)->queue(new VendaRealizada($venda));
 
-            return response()->json($venda, 201);
+
+            return redirect()->route('venda.index')->with('success', 'Produto comprado com sucesso!');
         } catch (ValidationException $e) {
 
             return response()->json($e->validator->errors(), 422);
