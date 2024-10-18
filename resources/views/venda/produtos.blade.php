@@ -17,11 +17,16 @@
                         <div class="p-4">
                             <h3 class="text-lg font-semibold">{{ $produto->nome }}</h3>
                             <h3 class="text-lg font-semibold">R${{ $produto->preco_venda }}</h3>
+                            <h3 class="text-lg font-semibold">Quantidade:{{ $produto->quantidade_estoque }}</h3>
                             <button class="mt-2 bg-blue-500 text-white px-4 py-2 rounded"
                                 onclick="openAddToCartModal('{{ $produto->id }}', '{{ $produto->nome }}', {{ $produto->preco_venda }})">
                                 Adicionar ao Carrinho
                             </button>
-
+                            <div class="mt-2">
+                                <x-button
+                                    onclick="openAddToCartModal('{{ $produto->id }}', '{{ $produto->nome }}', {{ $produto->preco_venda }})">
+                                    Salvar</x-button>
+                            </div>
                         </div>
                     </div>
                 @endforeach
@@ -86,6 +91,7 @@
 
         </div>
         <x-sucess-modal />
+        <x-error-modal />
         <x-carrinho-modal :produtos="$produtos" />
 
         <x-cliente-modal />
