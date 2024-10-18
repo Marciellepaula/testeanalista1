@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Models\Cliente;
 use App\Models\Venda;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Venda>
@@ -23,6 +24,7 @@ class VendaFactory extends Factory
         return [
             'cliente_id' => Cliente::factory(),
             'total' => $this->faker->randomFloat(2, 50, 500),
+            'codigo' => Str::uuid(),
         ];
     }
 }
