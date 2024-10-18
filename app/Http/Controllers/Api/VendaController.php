@@ -9,7 +9,6 @@ use App\Services\ProdutoService;
 use App\Services\VendaService;
 use Illuminate\Http\Request;
 
-use function Pest\Laravel\json;
 
 class VendaController extends Controller
 {
@@ -35,26 +34,39 @@ class VendaController extends Controller
     }
 
 
-    public function vendasPorCliente($clienteId)
+    public function vendasCodigo($codigo)
     {
-        $vendasDoCliente = $this->vendaService->getVendasPorCliente($clienteId);
-        return response()->json($vendasDoCliente);
+        $vendascodigo = $this->vendaService->getVendasCodigo($codigo);
+        return response()->json($vendascodigo);
     }
 
-
-    public function vendasAcimaDeTotal($total)
+    public function vendasAcimaDeTotal(Request $request)
     {
-        $vendasAcimaDeMil = $this->vendaService->getVendasAcimaDeTotal($total);
-        return response()->json($vendasAcimaDeMil);
-    }
+        $total = $request->input('total');
+        $codigo = $request->input('codigo');
 
+        $vendasAcima = $this->vendaService->getVendasAcimaDeTotal($total, $codigo);
+        return response()->json($vendasAcima);
+    }
 
     public function vendasEntreDatas(Request $request)
     {
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
+        $codigo = $request->input('codigo');
 
-        $vendasEntreDatas = $this->vendaService->getVendasEntreDatas($startDate, $endDate);
+        $vendasEntreDatas = $this->vendaService->getVendasEntreDatas($startDate, $endDate, $codigo);
         return response()->json($vendasEntreDatas);
+    }
+
+    public function buscaAvancada(Request $request)
+    {
+        $inicio = $request->input('inicio');
+        $fim = $request->input('fim');
+        $codigo = $request->input('codigo');
+        $total = $request->input('total');
+
+        $vendasAvancadas = $this->vendaService->getBuscaAvancada($inicio, $fim, $codigo, $total);
+        return response()->json($vendasAvancadas);
     }
 }
