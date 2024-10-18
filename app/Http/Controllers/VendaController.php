@@ -49,7 +49,6 @@ class VendaController extends Controller
 
         try {
 
-            logger($request);
             $validated = $request->validate([
                 'nome' => 'required|string|max:255',
                 'cpf' => 'required|string|max:14',
@@ -64,13 +63,10 @@ class VendaController extends Controller
 
 
             if (!$validated) {
-                return redirect()->route('venda')->withErrors(['error' => 'Erro ao comprar o produto.']);
+                return redirect()->back()->withErrors(['error' => 'Erro ao comprar o produto.']);
             }
             $cliente = $this->clienteService->create($validated);
             $venda = $this->vendaService->create($validated, $cliente->id);
-
-            Mail::to($cliente->email)->queue(new VendaRealizada($venda));
-
 
             return redirect()->back()->with('success', 'Produto comprado com sucesso!');
         } catch (\Exception $e) {
