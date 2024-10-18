@@ -19,6 +19,6 @@
     <script>
         setTimeout(function() {
             document.getElementById('error-modal').style.display = 'none';
-        }, 3000);
+        }, 4000);
     </script>
 @endif
