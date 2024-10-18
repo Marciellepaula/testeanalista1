@@ -2,9 +2,12 @@
 
 namespace App\Services;
 
+use App\Jobs\Vendas;
 use App\Models\Produto;
 use App\Models\Venda;
-use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+
 
 class VendaService
 {
@@ -15,12 +18,11 @@ class VendaService
 
     public function create(array $data, $id)
     {
-
-
-
         $venda = Venda::create([
             'cliente_id' => $id,
-            'total' => 0
+            'total' => 0,
+            'codigo' =>  Str::uuid(),
+            'status' => 'comprado'
         ]);
 
         $total = 0;
@@ -50,6 +52,8 @@ class VendaService
 
         $venda->update(['total' => $total]);
 
+        Vendas::dispatch($venda, $data['email']);
+
         return $venda;
     }
 
@@ -70,22 +74,30 @@ class VendaService
         $venda->delete();
     }
 
-
-
-    public function getVendasPorCliente($clienteId)
+    public function getVendasCodigo($codigo)
     {
-        return Venda::byCliente($clienteId)->with(['produtos', 'cliente'])->get();
+        return Venda::byCodigo($codigo);
     }
 
 
-    public function getVendasAcimaDeTotal($total)
+    public function getVendasAcimaDeTotal($total, $codigo)
     {
-        return Venda::aboveTotal($total)->with(['produtos', 'cliente'])->get();
+        return Venda::vendasAcimaDeTotal($total)->byCodigo($codigo)->with(['produtos', 'cliente'])->get();
     }
 
 
-    public function getVendasEntreDatas($startDate, $endDate)
+    public function getVendasEntreDatas($startDate, $endDate, $codigo)
     {
-        return Venda::betweenDates($startDate, $endDate)->with(['produtos', 'cliente'])->get();
+        return Venda::vendaEntreDatas($startDate, $endDate)->byCodigo($codigo)->with(['produtos', 'cliente'])->get();
+    }
+
+    public function getBuscaAvancada($inicio, $fim, $codigo, $total)
+    {
+
+        return Venda::with(['produtos', 'cliente'])
+            ->byCodigo($codigo)
+            ->vendasAcimaDeTotal($total)
+            ->vendaEntreDatas('created_at', [$inicio, $fim])
+            ->get();
     }
 }
