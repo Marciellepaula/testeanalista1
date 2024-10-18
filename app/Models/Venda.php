@@ -9,7 +9,7 @@ class Venda extends Model
 {
 
     use HasFactory;
-    protected $fillable = ['cliente_id', 'total'];
+    protected $fillable = ['cliente_id', 'total', 'codigo', 'status'];
 
     public function produtosvenda()
     {
@@ -19,7 +19,7 @@ class Venda extends Model
 
     public function produtos()
     {
-        return $this->belongsToMany(Produto::class)->withPivot('quantidade', 'preco_unitario')->withTimestamps();
+        return $this->belongsToMany(Produto::class)->withPivot('quantidade')->withTimestamps();
     }
 
     public function cliente()
@@ -27,23 +27,23 @@ class Venda extends Model
         return $this->belongsTo(Cliente::class);
     }
 
-
-
-    public function vendasPorCliente($clienteId)
+    public static function byCodigo($codigo)
     {
-        $vendasDoCliente = Venda::byCliente($clienteId)->with(['produtos', 'cliente'])->get();
-        return response()->json($vendasDoCliente);
+        return self::where('codigo', $codigo)->with(['produtos', 'cliente'])
+            ->get();
     }
 
 
-    public function vendasAcimaDeTotal($total)
+    public static function vendasAcimaDeTotal($total)
     {
-        $vendasAcimaDeMil = Venda::aboveTotal($total)->with(['produtos', 'cliente'])->get();
+        $vendasAcimaDeMil = self::where('total', '>', $total)->get();
         return response()->json($vendasAcimaDeMil);
     }
 
-    public function scopeEntreDatas($query, $inicio, $fim)
+
+    public static function vendaEntreDatas($inicio, $fim)
     {
-        return $query->whereBetween('created_at', [$inicio, $fim]);
+        return self::whereBetween('created_at', [$inicio, $fim])
+            ->get();
     }
 }
