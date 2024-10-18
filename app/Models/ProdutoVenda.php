@@ -20,6 +20,6 @@ class ProdutoVenda extends Pivot
 
     public function vendas()
     {
-        return $this->belongsToMany(Venda::class)->withPivot('quantidade', 'preco')->withTimestamps();
+        return $this->belongsToMany(Venda::class)->withPivot('preco')->withTimestamps();
     }
 }
