@@ -17,6 +17,8 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(Cliente::class);
             $table->decimal('total', 10, 2);
+            $table->uuid('codigo')->unique();
+            $table->string('status');
             $table->timestamps();
         });
     }
