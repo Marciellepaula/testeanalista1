@@ -13,7 +13,7 @@ class Produto extends Model
 
     public function vendas()
     {
-        return $this->belongsToMany(Venda::class)->withPivot('quantidade', 'preco_unitario')->withTimestamps();
+        return $this->belongsToMany(Venda::class)->withPivot('quantidade', 'total')->withTimestamps();
     }
 
 
