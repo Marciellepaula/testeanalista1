@@ -17,8 +17,13 @@ class CategoriaService
 
     public function create(array $data)
     {
-        return Categoria::create($data);
+        return Categoria::create([
+            'nome' => $data['nome'],
+            'descricao' => $data['descricao']
+        ]);
     }
+
+
 
 
     public function find($id)
