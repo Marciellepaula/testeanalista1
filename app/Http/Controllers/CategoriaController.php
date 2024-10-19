@@ -20,23 +20,24 @@ class CategoriaController extends Controller
     public function index()
     {
         $categorias = $this->categoriaService->getAll();
-        return view('categorias.index', compact('categorias'));
+        return view('categoria.index', compact('categorias'));
     }
 
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+
+        $validatedData = $request->validate([
             'nome' => 'required|string|max:255|unique:categorias',
             'descricao' => 'nullable|string|max:500',
         ]);
 
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
+        if (!$validatedData) {
+            return redirect()->back()->withErrors($validatedData)->withInput();
         }
 
         try {
             $categoria = $this->categoriaService->create($request->all());
-            return redirect()->route('categorias.index')->with('success', 'Categoria criada com sucesso!');
+            return redirect()->route('categoria.index')->with('success', 'Categoria criada com sucesso!');
         } catch (ValidationException $e) {
             return redirect()->back()->withErrors($e->validator)->withInput();
         }
