@@ -41,7 +41,7 @@ class VendaController extends Controller
     {
         $cupons = $this->cupomService->getAll();
         $produtos = $this->produtoService->getAll();
-        return view('venda.produtos', compact('produtos', 'cupons'));
+        return view('dashboard', compact('produtos', 'cupons'));
     }
 
     public function store(Request $request)
@@ -53,9 +53,9 @@ class VendaController extends Controller
                 'nome' => 'required|string|max:255',
                 'cpf' => 'required|string|max:14',
                 'telefone' => 'required|string|max:15',
-                'email' => 'required|string|email|max:255|unique:clientes,email',
+                'email' => 'required|string|email|max:255',
                 'produtos' => 'required|json',
-                'produtos.*.id' => 'required|exists:produtos,id',
+                'produtos.*.id' => 'required|',
                 'produtos.*.quantidade' => 'required|integer|min:1',
                 'cupom_desconto' => 'nullable|numeric|min:0|max:100'
             ]);
@@ -65,11 +65,20 @@ class VendaController extends Controller
             if (!$validated) {
                 return redirect()->back()->withErrors(['error' => 'Erro ao comprar o produto.']);
             }
-            $cliente = $this->clienteService->create($validated);
+
+            $cliente = $this->clienteService->findClientebycpf($request->cpf);
+
+
+            if (!$cliente) {
+                $cliente = $this->clienteService->create($validated);
+            }
+
             $venda = $this->vendaService->create($validated, $cliente->id);
+
 
             return redirect()->back()->with('success', 'Produto comprado com sucesso!');
         } catch (\Exception $e) {
+            logger($e);
             return redirect()->back()->withErrors(['error' => 'Erro ao comprar o produto.']);
         }
     }
