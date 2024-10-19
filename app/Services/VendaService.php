@@ -62,6 +62,7 @@ class VendaService
         return Venda::find($id);
     }
 
+
     public function update(Venda $venda)
     {
         $venda->update($venda->validated());
