@@ -28,6 +28,6 @@ class Vendas implements ShouldQueue
     public function handle(): void
     {
 
-        Mail::to('marcielle0644@gmail.com')->send(new VendaRealizada($this->venda));
+        Mail::to($this->email)->send(new VendaRealizada($this->venda));
     }
 }
