@@ -43,7 +43,6 @@ class Venda extends Model
 
         $startDate = DateTime::createFromFormat('Y-m-d', $startDate)->format('Y-m-d H:i:s');
         $endDate = DateTime::createFromFormat('Y-m-d', $endDate)->format('Y-m-d H:i:s');
-
         return $query->whereBetween('created_at', [$startDate, $endDate]);
     }
 }

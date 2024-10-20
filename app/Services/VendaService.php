@@ -96,7 +96,7 @@ class VendaService
 
     public function getVendasCodigo($codigo)
     {
-        return Venda::byCodigo($codigo)->get();
+        return Venda::byCodigo($codigo)->with(['produtos', 'cliente'])->get();
     }
 
     public function getVendasAcimaDeTotal($total, $codigo)
@@ -107,7 +107,7 @@ class VendaService
             ->get();
     }
 
-    public function getVendasEntreDatas($codigo, $startDate, $endDate,)
+    public function getVendasEntreDatas($codigo, $startDate, $endDate)
     {
         return Venda::vendaEntreDatas($startDate, $endDate)
             ->byCodigo($codigo)
@@ -120,7 +120,7 @@ class VendaService
         return Venda::with(['produtos', 'cliente'])
             ->byCodigo($codigo)
             ->vendasAcimaDeTotal($total)
-            ->vendaEntreDatas('created_at', [$inicio, $fim])
+            ->vendaEntreDatas($inicio, $fim)
             ->get();
     }
 }

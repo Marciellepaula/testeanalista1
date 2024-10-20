@@ -40,10 +40,8 @@ class VendaController extends Controller
         return response()->json($vendascodigo);
     }
 
-    public function vendasAcimaDeTotal(Request $request)
+    public function vendasAcimaDeTotal($total, $codigo)
     {
-        $total = $request->input('total');
-        $codigo = $request->input('codigo');
 
         $vendasAcima = $this->vendaService->getVendasAcimaDeTotal($total, $codigo);
         return response()->json($vendasAcima);
