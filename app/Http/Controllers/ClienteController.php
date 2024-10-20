@@ -35,7 +35,6 @@ class ClienteController extends Controller
             'cpf' => 'required|string|max:14|unique:clientes,cpf',
             'telefone' => 'required|string|max:15',
             'email' => 'required|email|max:255|unique:users',
-            'password' => 'required|string|min:8',
         ]);
 
         try {
