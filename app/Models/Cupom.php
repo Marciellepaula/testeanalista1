@@ -9,5 +9,5 @@ class Cupom extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['codigo', 'desconto_percentual', 'desconto_fixo', 'ativo', 'data_inicio', 'data_fim'];
+    protected $fillable = ['codigo', 'desconto_percentual',  'ativo', 'data_inicio', 'data_fim'];
 }
