@@ -249,7 +249,7 @@
             @endforeach
 
             if (discount > 0) {
-                if (status === '0') {
+                if (status) {
                     const discountAmount = (subtotal * (discount / 100)).toFixed(2);
                     id_docupo = idcupom;
                     document.getElementById('discountAmount').innerText = `R$ ${discountAmount.replace('.', ',')}`;
