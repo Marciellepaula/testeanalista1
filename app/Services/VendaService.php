@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Jobs\Vendas;
+use App\Models\Cupom;
 use App\Models\Produto;
 use App\Models\Venda;
 use Illuminate\Support\Facades\Log;
@@ -18,44 +19,59 @@ class VendaService
 
     public function create(array $data, $id)
     {
+
+
         $venda = Venda::create([
             'cliente_id' => $id,
             'total' => 0,
-            'codigo' =>  Str::uuid(),
-            'status' => 'comprado'
+            'codigo' => Str::uuid(),
+            'status' => 'despachado',
+            'quantidade' => 0
         ]);
 
         $total = 0;
+        $quantidade = 0;
 
         $produtos = json_decode($data['produtos'], true);
         foreach ($produtos as $produto) {
             $produtoInfo = Produto::find($produto['id']);
-            $subtotal = $produtoInfo->preco_venda * $produto['quantidade'];
-            $total += $subtotal;
 
-            $venda->produtos()->attach($produtoInfo->id, [
-                'quantidade' => $produto['quantidade'],
-                'preco' => $produtoInfo->preco_venda
-            ]);
-            $produtoInfo->update([
-                'quantidade' => $produtoInfo->quantidade - $produto['quantidade']
-            ]);
+            if (!$produtoInfo) {
+                continue;
+            }
+
+            $subtotal = $produtoInfo->preco_venda * $produto['quantidade'];
+            $quantidade += $produto['quantidade'];
+
+            if ($produtoInfo->quantidade_estoque >= $produto['quantidade']) {
+                $total += $subtotal;
+                $venda->produtos()->attach($produtoInfo->id);
+
+                $produtoInfo->update([
+                    'quantidade_estoque' => $produtoInfo->quantidade_estoque - $produto['quantidade']
+                ]);
+            }
         }
 
 
-
-        if (isset($data['cupom_desconto'])) {
-            $desconto = $total * ($data['cupom_desconto'] / 100);
+        $cupom =  Cupom::find($data['desconto']);
+        if ($cupom->desconto_percentual) {
+            $desconto = $total * ($cupom->desconto_percentual / 100);
             $total -= $desconto;
         }
 
-
-        $venda->update(['total' => $total]);
-
+        $venda->update([
+            'total' => $total,
+            'quantidade' => $quantidade
+        ]);
+        $cupom->update([
+            'ativo' => false,
+        ]);
         Vendas::dispatch($venda, $data['email']);
 
         return $venda;
     }
+
 
     public function find($id)
     {
