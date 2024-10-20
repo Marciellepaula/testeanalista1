@@ -35,7 +35,6 @@ class CupomController extends Controller
         $validator = $request->validate([
             'codigo' => 'required|string|max:50|unique:cupons,codigo',
             'desconto_percentual' => 'nullable|numeric|min:0|max:100',
-            'desconto_fixo' => 'nullable|numeric|min:0',
             'ativo' => 'required|boolean',
             'data_inicio' => 'nullable|date|before:data_fim',
             'data_fim' => 'nullable|date|after:data_inicio',
@@ -64,7 +63,6 @@ class CupomController extends Controller
         $validator = $request->validate([
             'codigo' => 'sometimes|required|string|max:50|unique:cupons,codigo,' . $cupom->id,
             'desconto_percentual' => 'sometimes|nullable|numeric|min:0|max:100',
-            'desconto_fixo' => 'sometimes|nullable|numeric|min:0',
             'ativo' => 'sometimes|required|boolean',
             'data_inicio' => 'sometimes|nullable|date|before:data_fim',
             'data_fim' => 'sometimes|nullable|date|after:data_inicio',
