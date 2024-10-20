@@ -33,8 +33,6 @@
                                 <td>
                                     <img src="{{ asset('storage/' . $produto->imagem) }}" alt="Imagem"
                                         class="w-16 h-16 object-cover">
-                                @else
-                                    Não disponível
                             @endif
                             </td>
                         </tr>
