@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('codigo', 50)->unique()->notNull();
             $table->decimal('desconto_percentual', 5, 2)->notNull();
-            $table->decimal('desconto_fixo', 10, 2)->nullable();
             $table->boolean('ativo')->default(true);
             $table->dateTime('data_inicio')->nullable();
             $table->dateTime('data_fim')->nullable();
