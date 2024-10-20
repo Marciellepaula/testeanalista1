@@ -16,7 +16,7 @@
 
                             <div class="mt-2">
                                 <x-button type="button"
-                                    onclick="openAddToCartModal('{{ $produto->id }}', '{{ $produto->nome }}', {{ $produto->preco_venda }})"
+                                    onclick="openAddToCartModal('{{ $produto->id }}', '{{ $produto->nome }}', {{ $produto->preco_venda }}, {{ $produto->quantidade_estoque }})"
                                     class="mt-2 bg-blue-500 text-white px-4 py-2 rounded">
                                     Adicionar ao Carrinho</x-button>
                             </div>
@@ -93,7 +93,7 @@
 
     <script>
         let cart = [];
-
+        let id_docupo = 0;
         document.addEventListener('DOMContentLoaded', function() {
             const openModalBtn = document.getElementById('openModal');
             const clientemodal = document.getElementById('clientemodal');
@@ -113,6 +113,9 @@
                 const telefone = document.getElementById('telefone').value;
                 const email = document.getElementById('email').value;
 
+
+                const descontoinput = document.getElementById('desconto');
+                descontoinput.value = id_docupo
 
                 const produtosInput = document.getElementById('produtosInput');
                 produtosInput.value = JSON.stringify(cart);
@@ -143,7 +146,7 @@
         });
 
 
-        function openAddToCartModal(productId, productName, productPrice) {
+        function openAddToCartModal(productId, productName, productPrice, quantidade_estoque) {
             document.getElementById('modalProductName').innerText = productName;
             const productSelect = document.getElementById('product');
             const quantityInput = document.getElementById('quantidade');
@@ -157,14 +160,23 @@
             document.getElementById('addToCartModal').classList.add('hidden');
         }
 
+
         function addToCart() {
             const productSelect = document.getElementById('product');
             const quantityInput = document.getElementById('quantidade');
 
             const productId = productSelect.value;
             const productName = productSelect.options[productSelect.selectedIndex].text;
-            const productPrice = parseFloat(productSelect.options[productSelect.selectedIndex].dataset.price);
+            const productPrice = parseFloat(productSelect.options[productSelect.selectedIndex].dataset
+                .preco);
             const quantity = parseInt(quantityInput.value);
+            const quantidadeEstoque = parseInt(productSelect.options[productSelect.selectedIndex].dataset
+                .quantidade_estoque);
+
+            if (quantity > quantidadeEstoque) {
+                alert(`Quantidade disponível: ${quantidadeEstoque}. Você não pode adicionar mais que isso ao carrinho.`);
+                return;
+            }
 
             if (productId && quantity > 0) {
                 const subtotal = productPrice * quantity;
@@ -181,7 +193,6 @@
                 closeAddToCartModal();
             }
         }
-
 
         function removeFromCart(index) {
             cart.splice(index, 1);
@@ -220,25 +231,38 @@
         }
 
 
+
         function applyDiscount() {
             const discountCode = document.getElementById('coupon_code').value;
             const discountMessage = document.getElementById('discountMessage');
             const subtotal = cart.reduce((acc, item) => acc + item.subtotal, 0);
             let discount = 0;
+            let idcupom = null;
+            let status = 0;
 
             @foreach ($cupons as $cupom)
                 if (discountCode === '{{ $cupom->codigo }}') {
-                    discount = {{ $cupom->desconto_percentual / 10 }};
+                    discount = {{ $cupom->desconto_percentual }};
+                    idcupom = {{ $cupom->id }};
+                    status = {{ $cupom->ativo ? '1' : '0' }};
                 }
             @endforeach
 
             if (discount > 0) {
-                const discountAmount = (subtotal * (discount / 100)).toFixed(2);
-                document.getElementById('discountAmount').innerText = `R$ ${discountAmount.replace('.', ',')}`;
-                discountMessage.innerText = `Desconto aplicado com sucesso!`;
-                updateTotals();
+                if (status === '0') {
+                    const discountAmount = (subtotal * (discount / 100)).toFixed(2);
+                    id_docupo = idcupom;
+                    document.getElementById('discountAmount').innerText = `R$ ${discountAmount.replace('.', ',')}`;
+                    discountMessage.innerText = `Desconto aplicado com sucesso!`;
+                    discountMessage.className = 'mt-2 text-green-600';
+                    updateTotals();
+                } else {
+                    discountMessage.innerText = `Cupom já utilizado!`;
+                    discountMessage.className = 'mt-2 text-red-600';
+                }
             } else {
                 discountMessage.innerText = `Cupom inválido.`;
+                discountMessage.className = 'mt-2 text-red-600';
             }
         }
     </script>
