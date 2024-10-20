@@ -51,7 +51,7 @@ it('can update a categoria', function () {
         'descricao' => 'Updated Description',
     ]);
 
-    $response->assertRedirect(route('categoria.index'));
+    $response->assertRedirect(route('categorias.index'));
     assertDatabaseHas('categorias', [
         'id' => $categoria->id,
         'nome' => 'Updated Name',
