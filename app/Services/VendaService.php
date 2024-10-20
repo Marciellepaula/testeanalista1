@@ -19,8 +19,6 @@ class VendaService
 
     public function create(array $data, $id)
     {
-
-
         $venda = Venda::create([
             'cliente_id' => $id,
             'total' => 0,

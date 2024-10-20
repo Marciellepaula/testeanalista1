@@ -42,7 +42,6 @@ class VendaController extends Controller
 
     public function vendasAcimaDeTotal($total, $codigo)
     {
-
         $vendasAcima = $this->vendaService->getVendasAcimaDeTotal($total, $codigo);
         return response()->json($vendasAcima);
     }
