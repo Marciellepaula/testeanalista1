@@ -2,30 +2,32 @@
 
 @section('content')
     <div class="p-6">
-        <h1 class="text-2xl font-bold">Gerenciamento de Categorias</h1>
+        <h1 class="text-3xl font-bold mb-6">Categoria</h1>
+        <div class="flex justify-end">
+            <a href="{{ route('categoria.create') }}"
+                class="inline-block px-4 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded">
+                Criar Categoria
+            </a>
+        </div>
 
+        <div class="overflow-x-auto">
+            <table class="min-w-full bg-white border rounded-lg shadow-md">
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="py-3 px-6 text-left font-medium text-gray-700">Nome</th>
+                        <th class="py-3 px-6 text-left font-medium text-gray-700">Descricao</th>
 
-
-
-        <div class="">
-
-            <form method="POST" action="{{ route('categoria.store') }}">
-                @csrf
-                <div>
-                    <label for="nome" class="block text-sm font-medium text-gray-700">Nome</label>
-                    <input type="text" name="nome" id="nome" required
-                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                </div>
-                <div class="mt-4">
-                    <label for="descricao" class="block text-sm font-medium text-gray-700">Descrição</label>
-                    <textarea name="descricao" id="descricao"
-                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"></textarea>
-                </div>
-                <div class="mt-4">
-                    <x-button type="submit" class="mt-2 bg-blue-500 text-white px-4 py-2 rounded">Salvar</x-button>
-                </div>
-            </form>
-
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    @foreach ($categorias as $categoria)
+                        <tr class="hover:bg-gray-50">
+                            <td class="py-4 px-6 text-gray-900">{{ $categoria->nome }}</td>
+                            <td class="py-4 px-6 text-gray-600">{{ $categoria->descricao }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
     </div>
 @endsection
