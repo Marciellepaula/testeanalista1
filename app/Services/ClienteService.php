@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Cliente;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
@@ -21,7 +22,8 @@ class ClienteService
             'nome' => $data['nome'],
             'cpf' => $data['cpf'],
             'telefone' => $data['telefone'],
-            'email' =>  $data['email']
+            'email' =>  $data['email'],
+            'user_id' => Auth::user()->id
         ]);
     }
 
