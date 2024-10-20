@@ -51,10 +51,11 @@ class VendaController extends Controller
                 'telefone' => 'required|string|max:15',
                 'email' => 'required|string|email|max:255',
                 'produtos' => 'required|json',
-                'produtos.*.id' => 'required',
+                'produtos.*.id' => 'required|integer|exists:produtos,id',
                 'produtos.*.quantidade' => 'required|integer|min:1',
-                'desconto' => 'nullable|nullable|numeric|min:0',
+                'desconto' => 'nullable|numeric|min:0',
             ]);
+
 
             $cliente = $this->clienteService->findClientebycpf($request->cpf);
 
@@ -66,8 +67,7 @@ class VendaController extends Controller
 
             return redirect()->back()->with('success', 'Produto comprado com sucesso!');
         } catch (\Exception $e) {
-            logger($e);
-            return redirect()->back()->withErrors(['error' => 'Erro ao comprar o produto.']);
+            return redirect()->back()->withErrors(['error' => $e->getMessage()]);
         }
     }
 
@@ -83,23 +83,5 @@ class VendaController extends Controller
 
 
         return redirect()->back()->with('success', 'Produto comprado com sucesso!');
-    }
-
-    public function update(Request $request, $id)
-    {
-        $venda = $this->vendaService->find($id);
-
-        if (!$venda) {
-            return redirect()->back()->withErrors(['error' => 'Erro ao comprar o produto.']);
-        }
-
-        try {
-            $venda = $this->vendaService->update($venda, $request->all());
-
-
-            return redirect()->back()->with('success', 'Produto comprado com sucesso!');
-        } catch (ValidationException $e) {
-            return redirect()->back()->withErrors(['error' => 'Erro ao comprar o produto.']);
-        }
     }
 }
