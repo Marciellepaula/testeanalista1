@@ -9,7 +9,7 @@ class Venda extends Model
 {
 
     use HasFactory;
-    protected $fillable = ['cliente_id', 'total', 'codigo', 'status'];
+    protected $fillable = ['cliente_id', 'total', 'codigo', 'status', 'quantidade'];
 
     public function produtosvenda()
     {
