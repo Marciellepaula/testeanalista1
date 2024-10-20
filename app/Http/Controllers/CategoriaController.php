@@ -23,6 +23,11 @@ class CategoriaController extends Controller
         return view('categoria.index', compact('categorias'));
     }
 
+
+    public function create()
+    {
+        return view('categoria.create');
+    }
     public function store(Request $request)
     {
 
@@ -37,7 +42,7 @@ class CategoriaController extends Controller
 
         try {
             $categoria = $this->categoriaService->create($request->all());
-            return redirect()->route('categoria.index')->with('success', 'Categoria criada com sucesso!');
+            return redirect()->route('categorias.index')->with('success', 'Categoria criada com sucesso!');
         } catch (ValidationException $e) {
             return redirect()->back()->withErrors($e->validator)->withInput();
         }
