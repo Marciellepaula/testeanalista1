@@ -7,8 +7,10 @@
             <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
                 @foreach ($produtos as $produto)
                     <div class="rounded-lg overflow-hidden shadow-lg">
-                        <img class="h-auto max-w-full" src="{{ asset('storage/' . $produto->imagem) }}"
+                        <img class="h-auto max-w-full"
+                            src="{{ $produto->imagem ? asset('storage/' . $produto->imagem) : asset('images/' . 'flowes.jpg') }}"
                             alt="{{ $produto->nome }}">
+
                         <div class="p-4">
                             <h3 class="text-lg font-semibold">{{ $produto->nome }}</h3>
                             <h3 class="text-lg font-semibold">R${{ $produto->preco_venda }}</h3>
@@ -76,8 +78,8 @@
 
             <div class="mt-6">
                 <button type="submit" form="saleForm" id="openModal"
-                    class="w-full py-3 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 focus:outline-none focus:bg-green-700">Finalizar
-                    Venda</button>
+                    class="w-full py-3 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 focus:outline-none focus:bg-green-700">Comprar
+                </button>
             </div>
 
         </div>
