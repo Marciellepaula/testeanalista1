@@ -25,7 +25,8 @@ class VendaFactory extends Factory
             'cliente_id' => Cliente::factory(),
             'total' => $this->faker->randomFloat(2, 50, 500),
             'codigo' => Str::uuid(),
-            'status' => $this->faker->word
+            'status' => $this->faker->word,
+            'quantidade' => $this->faker->numberBetween(1, 10),
         ];
     }
 }

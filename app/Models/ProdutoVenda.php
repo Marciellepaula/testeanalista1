@@ -10,11 +10,11 @@ class ProdutoVenda extends Pivot
 {
     use HasFactory;
 
-    protected $fillable = ['venda_id', 'produto_id', 'quantidade', 'preco'];
+    protected $fillable = ['venda_id', 'produto_id'];
 
     public function produtos()
     {
-        return $this->belongsToMany(Produto::class)->withPivot('quantidade', 'preco')->withTimestamps();
+        return $this->belongsToMany(Produto::class)->withTimestamps();
     }
 
 

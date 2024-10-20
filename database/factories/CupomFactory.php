@@ -22,7 +22,6 @@ class CupomFactory extends Factory
         return [
             'codigo' => $this->faker->unique()->word . '-' . $this->faker->randomNumber(5),
             'desconto_percentual' => $this->faker->numberBetween(5, 50),
-            'desconto_fixo' => $this->faker->randomFloat(2, 10, 100),
             'ativo' => $this->faker->boolean(80),
             'data_inicio' => $this->faker->dateTimeBetween('now', '+1 month'),
             'data_fim' => $this->faker->dateTimeBetween('+1 month', '+2 months'),

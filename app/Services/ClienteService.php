@@ -29,11 +29,11 @@ class ClienteService
     {
         return Cliente::find($id);
     }
+
     public function findClientebycpf($cpf)
     {
-        return Cliente::where('cpf', '=', $cpf)->firstOrFail();
+        return Cliente::where('cpf', $cpf)->first();
     }
-
 
     public function update(Cliente $cliente)
     {
