@@ -2,15 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Venda;
 use App\Services\VendaService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\VendaRealizada;
 use App\Services\ClienteService;
 use App\Services\CupomService;
 use App\Services\ProdutoService;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
 class VendaController extends Controller
@@ -46,7 +42,7 @@ class VendaController extends Controller
 
     public function store(Request $request)
     {
-
+        logger($request);
         try {
 
             $validated = $request->validate([
@@ -55,26 +51,18 @@ class VendaController extends Controller
                 'telefone' => 'required|string|max:15',
                 'email' => 'required|string|email|max:255',
                 'produtos' => 'required|json',
-                'produtos.*.id' => 'required|',
+                'produtos.*.id' => 'required',
                 'produtos.*.quantidade' => 'required|integer|min:1',
-                'cupom_desconto' => 'nullable|numeric|min:0|max:100'
+                'desconto' => 'nullable|nullable|numeric|min:0',
             ]);
 
-
-
-            if (!$validated) {
-                return redirect()->back()->withErrors(['error' => 'Erro ao comprar o produto.']);
-            }
-
             $cliente = $this->clienteService->findClientebycpf($request->cpf);
-
 
             if (!$cliente) {
                 $cliente = $this->clienteService->create($validated);
             }
 
             $venda = $this->vendaService->create($validated, $cliente->id);
-
 
             return redirect()->back()->with('success', 'Produto comprado com sucesso!');
         } catch (\Exception $e) {
@@ -85,16 +73,16 @@ class VendaController extends Controller
 
 
 
-
     public function show($id)
     {
         $venda = $this->vendaService->find($id);
 
         if (!$venda) {
-            return response()->json(['message' => 'Venda não encontrada'], 404);
+            return redirect()->back()->withErrors(['error' => 'Erro ao comprar o produto.']);
         }
 
-        return response()->json($venda);
+
+        return redirect()->back()->with('success', 'Produto comprado com sucesso!');
     }
 
     public function update(Request $request, $id)
@@ -102,27 +90,16 @@ class VendaController extends Controller
         $venda = $this->vendaService->find($id);
 
         if (!$venda) {
-            return response()->json(['message' => 'Venda não encontrada'], 404);
+            return redirect()->back()->withErrors(['error' => 'Erro ao comprar o produto.']);
         }
 
         try {
             $venda = $this->vendaService->update($venda, $request->all());
-            return response()->json($venda);
+
+
+            return redirect()->back()->with('success', 'Produto comprado com sucesso!');
         } catch (ValidationException $e) {
-            return response()->json($e->validator->errors(), 422);
+            return redirect()->back()->withErrors(['error' => 'Erro ao comprar o produto.']);
         }
-    }
-
-    public function destroy($id)
-    {
-        $venda = $this->vendaService->find($id);
-
-        if (!$venda) {
-            return response()->json(['message' => 'Venda não encontrada'], 404);
-        }
-
-        $this->vendaService->delete($venda);
-
-        return response()->json(['message' => 'Venda excluída com sucesso']);
     }
 }
