@@ -30,6 +30,7 @@
             </div>
 
             <input type="hidden" id="produtosInput" name="produtos" />
+            <input type="hidden" id="desconto" name="desconto" />
 
             <div class="flex justify-end">
                 <button type="button" id="closeModalBtn"
