@@ -21,8 +21,6 @@ class ProdutoVendaFactory extends Factory
         return [
             'produto_id' => Produto::factory(),
             'venda_id' => Venda::factory(),
-            'quantidade' => $this->faker->numberBetween(1, 10),
-            'preco' => $this->faker->randomFloat(2, 1, 100),
             'created_at' => now(),
             'updated_at' => now(),
         ];
