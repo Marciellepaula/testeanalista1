@@ -6,5 +6,6 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::get('/vendas/cliente/{codigo}', [VendaController::class, 'vendasCodigo']);
-Route::get('/vendas/acima-total/', [VendaController::class, 'vendasAcimaDeTotal']);
-Route::get('/vendas/busca-avancada/', [VendaController::class, 'buscaAvancada']);
+Route::get('/vendas/cliente/total/{total}', [VendaController::class, 'vendasAcimaDeTotal']);
+Route::get('/vendas/cliente/data/{codigo}/{dataInicial}/{dataFinal}', [VendaController::class, 'vendasEntreDatas']);
+Route::get('/vendas/cliente/{total}/{dataInicial/{dataFinal}', [VendaController::class, 'buscaAvancada']);

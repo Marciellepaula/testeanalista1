@@ -49,23 +49,14 @@ class VendaController extends Controller
         return response()->json($vendasAcima);
     }
 
-    public function vendasEntreDatas(Request $request)
+    public function vendasEntreDatas($codigo, $startDate, $endDate)
     {
-        $startDate = $request->input('start_date');
-        $endDate = $request->input('end_date');
-        $codigo = $request->input('codigo');
-
-        $vendasEntreDatas = $this->vendaService->getVendasEntreDatas($startDate, $endDate, $codigo);
+        $vendasEntreDatas = $this->vendaService->getVendasEntreDatas($codigo, $startDate, $endDate);
         return response()->json($vendasEntreDatas);
     }
 
-    public function buscaAvancada(Request $request)
+    public function buscaAvancada($inicio, $fim, $codigo, $total)
     {
-        $inicio = $request->input('inicio');
-        $fim = $request->input('fim');
-        $codigo = $request->input('codigo');
-        $total = $request->input('total');
-
         $vendasAvancadas = $this->vendaService->getBuscaAvancada($inicio, $fim, $codigo, $total);
         return response()->json($vendasAvancadas);
     }

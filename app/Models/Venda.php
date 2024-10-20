@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use DateTime;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -19,7 +20,7 @@ class Venda extends Model
 
     public function produtos()
     {
-        return $this->belongsToMany(Produto::class)->withPivot('quantidade')->withTimestamps();
+        return $this->belongsToMany(Produto::class)->withTimestamps();
     }
 
     public function cliente()
@@ -27,23 +28,22 @@ class Venda extends Model
         return $this->belongsTo(Cliente::class);
     }
 
-    public static function byCodigo($codigo)
+    public function scopeByCodigo($query, $codigo)
     {
-        return self::where('codigo', $codigo)->with(['produtos', 'cliente'])
-            ->get();
+        return $query->where('codigo', $codigo);
     }
 
-
-    public static function vendasAcimaDeTotal($total)
+    public function scopeVendasAcimaDeTotal($query, $total)
     {
-        $vendasAcimaDeMil = self::where('total', '>', $total)->get();
-        return response()->json($vendasAcimaDeMil);
+        return $query->where('total', '>', $total);
     }
 
-
-    public static function vendaEntreDatas($inicio, $fim)
+    public function scopeVendaEntreDatas($query, $startDate, $endDate)
     {
-        return self::whereBetween('created_at', [$inicio, $fim])
-            ->get();
+
+        $startDate = DateTime::createFromFormat('Y-m-d', $startDate)->format('Y-m-d H:i:s');
+        $endDate = DateTime::createFromFormat('Y-m-d', $endDate)->format('Y-m-d H:i:s');
+
+        return $query->whereBetween('created_at', [$startDate, $endDate]);
     }
 }

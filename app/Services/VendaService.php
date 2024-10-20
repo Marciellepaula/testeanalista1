@@ -54,19 +54,22 @@ class VendaService
         }
 
 
-        $cupom =  Cupom::find($data['desconto']);
-        if ($cupom->desconto_percentual) {
-            $desconto = $total * ($cupom->desconto_percentual / 100);
-            $total -= $desconto;
-        }
 
+        if ($data['desconto']) {
+            $cupom =  Cupom::find($data['desconto']);
+            if ($cupom->desconto_percentual) {
+                $desconto = $total * ($cupom->desconto_percentual / 100);
+                $total -= $desconto;
+            }
+            $cupom->update([
+                'ativo' => false,
+            ]);
+        }
         $venda->update([
             'total' => $total,
             'quantidade' => $quantidade
         ]);
-        $cupom->update([
-            'ativo' => false,
-        ]);
+
         Vendas::dispatch($venda, $data['email']);
 
         return $venda;
@@ -93,21 +96,24 @@ class VendaService
 
     public function getVendasCodigo($codigo)
     {
-        return Venda::byCodigo($codigo);
+        return Venda::byCodigo($codigo)->get();
     }
-
 
     public function getVendasAcimaDeTotal($total, $codigo)
     {
-        return Venda::vendasAcimaDeTotal($total)->byCodigo($codigo)->with(['produtos', 'cliente'])->get();
+        return Venda::vendasAcimaDeTotal($total)
+            ->byCodigo($codigo)
+            ->with(['produtos', 'cliente'])
+            ->get();
     }
 
-
-    public function getVendasEntreDatas($startDate, $endDate, $codigo)
+    public function getVendasEntreDatas($codigo, $startDate, $endDate,)
     {
-        return Venda::vendaEntreDatas($startDate, $endDate)->byCodigo($codigo)->with(['produtos', 'cliente'])->get();
+        return Venda::vendaEntreDatas($startDate, $endDate)
+            ->byCodigo($codigo)
+            ->with(['produtos', 'cliente'])
+            ->get();
     }
-
     public function getBuscaAvancada($inicio, $fim, $codigo, $total)
     {
 
