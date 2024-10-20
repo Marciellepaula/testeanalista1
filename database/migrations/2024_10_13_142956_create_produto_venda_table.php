@@ -17,8 +17,6 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(Produto::class);
             $table->foreignIdFor(Venda::class);
-            $table->integer('quantidade');
-            $table->decimal('preco', 10, 2);
             $table->timestamps();
         });
     }
