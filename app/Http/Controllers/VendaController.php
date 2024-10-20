@@ -42,7 +42,7 @@ class VendaController extends Controller
 
     public function store(Request $request)
     {
-        logger($request);
+
         try {
 
             $validated = $request->validate([
