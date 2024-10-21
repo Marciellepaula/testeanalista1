@@ -71,4 +71,5 @@ Pronto, com isso você tem a aplicação pronta e rodando conforme planejado.
 - **Docker**
 - **Laravel 11**
 - **PHP 8.3**
+- **Breeze 2.2.2**
 
