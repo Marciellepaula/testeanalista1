@@ -62,3 +62,12 @@ e em seguida executar o
 ```
 
 Pronto, com isso você tem a aplicação pronta e rodando conforme planejado.
+
+## Tecnologias Utilizadas
+
+- **HTML5**: Estrutura da página.
+- **Tailwind CSS**: Estilização responsiva e moderna.
+- **JavaScript**: Lógica para busca e exibição de dados.
+ **Docker**: Utilizado para containerização da aplicação, facilitando o ambiente de desenvolvimento e implantação.
+- **Laravel**: Framework PHP usado no backend para gerenciar a lógica de negócio e fornecer a na WEB e API de vendas.
+
