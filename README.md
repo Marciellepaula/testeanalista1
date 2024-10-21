@@ -66,7 +66,7 @@ Pronto, com isso você tem a aplicação pronta e rodando conforme planejado.
 ## Tecnologias Utilizadas
 
 - **HTML5**
-- **Tailwind CSS**
+- **Tailwind CSS 3.1**
 - **JavaScript**
 - **Docker**
 - **Laravel 11**
